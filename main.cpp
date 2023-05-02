@@ -1,7 +1,7 @@
 #include <cstdint>
 #include <chrono>
 #include <iostream>
-#include <vector>
+#include <array>
 #include <immintrin.h>
 #include <cstring>
 /*AVX512 - VNNI INTRODUCES 4 NEW INSTRUCTIONS
@@ -18,9 +18,15 @@ producing intermediate word results which are summed and accumulated in the doub
 *
 *
 */
-
 template <typename T>
-void print_register(__m512i r);
+void print_register(__m512i r) {
+	constexpr auto entries_count1 = 512 / (8 * sizeof(T));
+	std::array<T, entries_count1> values = {};
+	std::cout << "entries count is: " << entries_count1 << "\n";
+	_mm512_storeu_epi32(values.data(), r);
+	std::cout << +values[0] << std::endl;
+
+}
 int main()
 {
 	/*
@@ -69,8 +75,14 @@ int main()
 	_src2 = _mm512_loadu_epi8(src2);
 	_src3 = _mm512_loadu_epi32(src3);
 
-	_dst = _mm512_dpbusd_epi32(_src1, _src2, _src3);
-	//print_register<int32_t>(_src3);
+	_dst = _mm512_dpbusd_epi32(_src3, _src1, _src2);
+	print_register<std::int8_t>(_src1);
+
+	print_register<std::int8_t>(_src2);
+
+	print_register<std::int32_t>(_src3);
+
+	print_register<std::int32_t>(_dst);
 
 #else
 	std::cout << " AVX512VNNI Support not found\n";
@@ -78,12 +90,3 @@ int main()
 	return 0;
 }
 
-template <typename T>
-void print_register(__m512i r) {
-	std::cout << "started";
-	auto entries_count = 512 / (8 * sizeof(T));
-	T values[entries_count];
-	std::cout << "entries count is: " << entries_count << "\n";
-	std::memcpy(&values, &r, entries_count);
-	for (T value : values) std::cout << value << std::endl;
-}
