@@ -43,10 +43,10 @@ int main()
 	*/
 
 	//We start off by creating the arrays to manipulate with the istructions
-	alignas(64) uint8_t src1[1024] = {};
-	alignas(64) int8_t src2[1024] = {};
-	alignas(64) int32_t src3[256] = {};
-	alignas(64) int32_t dst[256] = {};
+	std::array<std::uint8_t, 1024> src1 = {};
+	std::array<std::int8_t, 1024> src2 = {};
+	std::array<std::int32_t, 256> src3 = {};
+	std::array<std::int32_t, 256> dst = {};
 
 	for (int i = 0;i < 1024;i++) {
 		src1[i] = i % 240;
