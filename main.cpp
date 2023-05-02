@@ -44,10 +44,10 @@ int main()
 	*/
 
 	//We start off by creating the arrays to manipulate with the istructions
-	uint8_t src1[1024];
-	uint8_t src2[1024];
-	int32_t src3[256];
-	int32_t dst[256];
+	alignas(64) uint8_t src1[1024] = {};
+	alignas(64) uint8_t src2[1024] = {};
+	alignas(64) int32_t src3[256] = {};
+	alignas(64) int32_t dst[256] = {};
 
 	for (int i = 0;i < 1024;i++) {
 		src1[i] = i % 240;
