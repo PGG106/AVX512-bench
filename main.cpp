@@ -29,12 +29,12 @@ void print_register(__m512i r) {
 int main()
 {
 	/*
-	VPDPBUSD offers 3 intrisics for 512 bits wide registers:
+	VPDPBUSD offers 3 intrinsics for 512 bits wide registers:
 	_mm512_dpbusd_epi32
 	_mm512_mask_dpbusd_epi32
 	_mm512_maskz_dpbusd_epi32
 
-	the main action all 3 instrisics do is:
+	the main action all 3 intrinsics do is:
 	Multiply groups of 4 adjacent pairs of unsigned 8-bit integers in a with corresponding signed 8-bit integers in b, producing 4 intermediate signed 16-bit results.
 	Sum these 4 results with the corresponding 32-bit integer in src, and store the packed 32-bit results in dst.
 
