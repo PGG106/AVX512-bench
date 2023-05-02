@@ -56,7 +56,7 @@ int main()
 	for (int i = 0;i < 256;i++) {
 		src3[i] = i;
 	}
-	//Mimick the desired end result without using instrisics
+	//Mimick the desired end result without using intrinsics
 	for (int i = 0;i < 256;i++) {
 		dst[i] = (src1[i * 4] * src2[i * 4]) +
 			(src1[i * 4 + 1] * src2[i * 4 + 1]) +
