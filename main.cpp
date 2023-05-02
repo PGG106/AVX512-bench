@@ -63,9 +63,9 @@ int main()
 			(src1[i * 4 + 3] * src2[i * 4 + 3]) +
 			src3[i];
 	}
-	/**************************************** AVX512VNNI instrisics ****************************/
+	/**************************************** AVX512VNNI intrisics ****************************/
 #if defined(__AVX512VNNI__) && defined(__AVX512F__)
-	std::cout << "Now trying AVX512VNNI instrisics\n";
+	std::cout << "Now trying AVX512VNNI intrinsics\n";
 	//The goal is doing dst = (src*src2) + src3 with 1 instruction
 	//Create the registers to load the arrays into
 	__m512i _src1, _src2, _src3, _dst;
