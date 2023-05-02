@@ -2,7 +2,6 @@
 #include <iostream>
 #include <array>
 #include <immintrin.h>
-#include <cstring>
 
 template <typename T>
 void print_register(__m512i r) {
