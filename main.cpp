@@ -73,14 +73,11 @@ int main()
 	_src1 = _mm512_loadu_epi8(src1);
 	_src2 = _mm512_loadu_epi8(src2);
 	_src3 = _mm512_loadu_epi32(src3);
-
 	_dst = _mm512_dpbusd_epi32(_src3, _src1, _src2);
+
 	print_register<std::uint8_t>(_src1);
-
 	print_register<std::int8_t>(_src2);
-
 	print_register<std::int32_t>(_src3);
-
 	print_register<std::int32_t>(_dst);
 
 #else
