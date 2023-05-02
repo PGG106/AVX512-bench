@@ -45,13 +45,13 @@ int main()
 
 	//We start off by creating the arrays to manipulate with the istructions
 	alignas(64) uint8_t src1[1024] = {};
-	alignas(64) uint8_t src2[1024] = {};
+	alignas(64) int8_t src2[1024] = {};
 	alignas(64) int32_t src3[256] = {};
 	alignas(64) int32_t dst[256] = {};
 
 	for (int i = 0;i < 1024;i++) {
 		src1[i] = i % 240;
-		src2[i] = i % 240;
+		src2[i] = i % 100;
 	}
 	for (int i = 0;i < 256;i++) {
 		src3[i] = i;
@@ -76,7 +76,7 @@ int main()
 	_src3 = _mm512_loadu_epi32(src3);
 
 	_dst = _mm512_dpbusd_epi32(_src3, _src1, _src2);
-	print_register<std::int8_t>(_src1);
+	print_register<std::uint8_t>(_src1);
 
 	print_register<std::int8_t>(_src2);
 
