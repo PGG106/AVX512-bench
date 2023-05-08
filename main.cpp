@@ -2,6 +2,7 @@
 #include <array>
 #include <immintrin.h>
 #include <chrono>
+#include "MockNet.h"
 
 template<typename T>
 void print_register(const __m512i& zmm0)
@@ -16,8 +17,7 @@ void print_register(const __m512i& zmm0)
 	}
 }
 
-
-int main()
+void bench_primitive()
 {
 	std::array<uint8_t, 1024> src1 = {};
 	std::array<int8_t, 1024> src2 = {};
@@ -82,5 +82,17 @@ int main()
 #else
 	std::cout << " AVX512VNNI Support not found\n";
 #endif
+}
+
+int main()
+{
+	bench_primitive();
+	MockNet net = MockNet();
+	net.init();
+	net.move(net.board_accumulator, 6, 10, 25);
+	auto output = net.output(net.board_accumulator);
+	auto output2 = net.outputSIMD(net.board_accumulator);
+	std::cout << output << std::endl;
+	std::cout << output2 << std::endl;
 	return 0;
 }

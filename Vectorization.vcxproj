@@ -143,12 +143,14 @@
     <ClCompile Include="..\..\..\Desktop\version2-2.02.00\dispatch_example2.cpp" />
     <ClCompile Include="..\..\..\Desktop\version2-2.02.00\instrset_detect.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MockNet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Desktop\version2-2.02.00\LICENSE" />
     <None Include="..\..\..\Desktop\version2-2.02.00\README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MockNet.h" />
     <ClInclude Include="simd.h" />
   </ItemGroup>
   <ItemGroup>

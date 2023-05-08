@@ -27,6 +27,9 @@
     <ClCompile Include="..\..\..\Desktop\version2-2.02.00\dispatch_example2.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="MockNet.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Desktop\version2-2.02.00\LICENSE" />
@@ -34,6 +37,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="simd.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="MockNet.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
