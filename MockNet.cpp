@@ -36,36 +36,44 @@ int32_t MockNet::output(const MockNet::accumulator& board_accumulator)
 {
 	int32_t output = 0;
 	auto start = std::chrono::high_resolution_clock::now();
-
-	for (int i = 0; i < HIDDEN_SIZE; i++)
-	{
-		output += board_accumulator.data()[i] * static_cast<int32_t>(outputWeights[i]);
+	for (int j = 0;j < 1500;j++) {
+		for (int i = 0; i < HIDDEN_SIZE; i++)
+		{
+			output += board_accumulator.data()[i] * static_cast<int32_t>(outputWeights[i]);
+		}
 	}
 	int32_t unsquared = output / 255 + outputBias;
 	auto stop = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
-	std::cout << duration << std::endl;
+	std::cout <<"Net inference with autovec took "<< duration / 1500 << std::endl;
 	return unsquared * 400 / (64 * 255);
 }
 
 //Simulates an update of the net
 int32_t MockNet::outputSIMD(const MockNet::accumulator& board_accumulator)
 {
+#if defined(__AVX512VNNI__) && defined(__AVX512F__)
 	constexpr int register_size = 512;
 	constexpr int int8_per_register = 512 / 8;
 	constexpr int int32_per_register = 512 / 32;
 	int32_t output = 0;
 	__m512i _src1, _src2, _src3, _dst;
 	auto start = std::chrono::high_resolution_clock::now();
-	for (int i = 0; i < HIDDEN_SIZE / int8_per_register;i++) {
-		_src1 = _mm512_loadu_si512((__m512i const*)&board_accumulator.data()[0]);
-		_src2 = _mm512_loadu_si512((__m512i const*)&outputWeights[0]);
-		_src3 = _mm512_set1_epi8(1);
-		_dst = _mm512_dpbusd_epi32(_src3, _src1, _src2);
+	for (int j = 0;j < 1500;j++) {
+
+		for (int i = 0; i < HIDDEN_SIZE / int8_per_register;i++) {
+			_src1 = _mm512_loadu_si512((__m512i const*)&board_accumulator.data()[0]);
+			_src2 = _mm512_loadu_si512((__m512i const*)&outputWeights[0]);
+			_src3 = _mm512_set1_epi8(1);
+			_dst = _mm512_dpbusd_epi32(_src3, _src1, _src2);
+		}
+	
 	}
 	int32_t unsquared = output / 255 + outputBias;
 	auto stop = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
-	std::cout << duration << std::endl;
+	std::cout <<"Net inference with SIMD took "<< duration / 1500 << std::endl;
 	return unsquared * 400 / (64 * 255);
+#endif
+	return 0;
 }
