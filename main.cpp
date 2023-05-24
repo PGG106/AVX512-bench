@@ -86,6 +86,22 @@ void bench_primitive()
 #endif
 }
 
+
+void bench_nnue()
+{
+
+	MockNet net = MockNet();
+	net.init();
+	net.move(net.board_accumulator, 6, 10, 25);
+	auto output = net.output(net.board_accumulator);
+	std::cout << output << std::endl;
+
+
+}
+
+
+
+
 //Convolute an input matrix with a kernel and add a bias
 /* array([[28., 31., 34.],
        [40., 43., 46.],
@@ -246,9 +262,7 @@ void bench_conv() {
 int main()
 {
 	//bench_primitive();
-	MockNet net = MockNet();
-	net.init();
-	net.move(net.board_accumulator, 6, 10, 25);
+	bench_nnue();
 	bench_conv();
 	return 0;
 }
