@@ -21,7 +21,7 @@ void print_register(const __m512i& zmm0)
 
 void bench_primitive()
 {
-	constexpr int samples = 10000000;
+	constexpr int samples = 10000;
 	std::array<uint8_t, 1024> src1 = {};
 	std::array<int8_t, 1024> src2 = {};
 	std::array<int32_t, 256> src3 = {};
@@ -35,6 +35,7 @@ void bench_primitive()
 		src3[i] = static_cast<int32_t>(i);
 	}
 	int64_t total_time = 0;
+	int64_t total_sum = 0;
 	//Loop 1000 times to get a good average
 	for (int j = 0;j < samples;j++) {
 		auto start = std::chrono::high_resolution_clock::now();
@@ -46,16 +47,16 @@ void bench_primitive()
 				(src1[i * 4 + 3] * src2[i * 4 + 3]) +
 				src3[i]
 				);
+			total_sum += dst1[i];
 		}
 		auto stop = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
 		total_time += duration;
+		total_sum = 0;
 	}
 
 	std::cout << "Autovec code took an average of " << total_time / samples << " nanoseconds" << std::endl;
-	for (size_t i = 240; i < 256; i++) {
-		std::cout << static_cast<int64_t>(dst1[i]) << "\n";
-	}
+	std::cout << "Primitive autovec total sum is: " << total_sum << std::endl;
 	std::cout << " \n--- \n";
 #if defined(__AVX512VNNI__) && defined(__AVX512F__)
 	std::cout << "Now trying AVX512VNNI instrisics\n";
@@ -63,6 +64,7 @@ void bench_primitive()
 	constexpr int register_size = 512;
 	constexpr int int8_per_register = 512 / 8;
 	constexpr int int32_per_register = 512 / 32;
+	int64_t final_sum = 0;
 	total_time = 0;
 	//Loop 1000 times to get a good average
 	for (int j = 0;j < samples;j++) {
@@ -72,6 +74,7 @@ void bench_primitive()
 			_src2 = _mm512_loadu_si512((__m512i const*)&src2[int8_per_register * i]);
 			_src3 = _mm512_loadu_si512((__m512i const*)&src3[int32_per_register * i]);
 			_dst = _mm512_dpbusd_epi32(_src3, _src1, _src2);
+			final_sum += _mm512_reduce_add_epi32(_dst);
 		}
 		auto simd_stop = std::chrono::high_resolution_clock::now();
 		auto simd_duration = std::chrono::duration_cast<std::chrono::nanoseconds>(simd_stop - simd_start).count();
@@ -79,7 +82,7 @@ void bench_primitive()
 	}
 
 	std::cout << "SIMD code took an average of " << total_time / samples << " nanoseconds" << std::endl;
-	print_register<int32_t>(_dst);
+	std::cout << "Primitive SIMD total sum is: " << final_sum << std::endl;
 
 #else
 	std::cout << " AVX512VNNI Support not found\n";
@@ -104,8 +107,8 @@ void bench_nnue()
 
 //Convolute an input matrix with a kernel and add a bias
 /* array([[28., 31., 34.],
-       [40., 43., 46.],
-       [52., 55., 58.]])*/
+	   [40., 43., 46.],
+	   [52., 55., 58.]])*/
 void convolute(std::array<std::array<int8_t, 4>, 4> input, std::array<std::array<int8_t, 2>, 2> kernel, int32_t bias)
 {
 	int convolute = 0; // This holds the convolution results for an index.
@@ -261,7 +264,7 @@ void bench_conv() {
 
 int main()
 {
-	//bench_primitive();
+	bench_primitive();
 	bench_nnue();
 	bench_conv();
 	return 0;
