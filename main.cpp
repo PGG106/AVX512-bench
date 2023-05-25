@@ -40,13 +40,12 @@ void bench_primitive()
 	for (int j = 0;j < samples;j++) {
 		auto start = std::chrono::high_resolution_clock::now();
 		for (size_t i = 0; i < 256; i++) {
-			dst1[i] = static_cast<int32_t>(
-				(src1[i * 4] * src2[i * 4]) +
-				(src1[i * 4 + 1] * src2[i * 4 + 1]) +
-				(src1[i * 4 + 2] * src2[i * 4 + 2]) +
-				(src1[i * 4 + 3] * src2[i * 4 + 3]) +
-				src3[i]
-				);
+			dst1[i] = 
+				static_cast<int32_t>(src1[i * 4]) * static_cast<int32_t>(src2[i * 4]) +
+				static_cast<int32_t>(src1[i * 4 + 1]) * static_cast<int32_t>(src2[i * 4 + 1]) +
+				static_cast<int32_t>(src1[i * 4 + 2]) * static_cast<int32_t>(src2[i * 4 + 2]) +
+				static_cast<int32_t>(src1[i * 4 + 3]) * static_cast<int32_t>(src2[i * 4 + 3]) +
+				static_cast<int32_t>(src3[i]);
 			total_sum += dst1[i];
 		}
 		auto stop = std::chrono::high_resolution_clock::now();
