@@ -6,18 +6,6 @@
 #include <iostream>
 #include <assert.h>
 
-template<typename T>
-void print_register(const __m512i& zmm0)
-{
-	constexpr auto entries_count = 512 / (8 * sizeof(T));
-
-	std::array<T, entries_count> values = {};
-	_mm512_storeu_si512((__m512i*)values.data(), zmm0);
-
-	for (size_t i = 0; i < entries_count; i++) {
-		std::cout << static_cast<int64_t>(values[i]) << "\n";
-	}
-}
 
 void bench_primitive()
 {
