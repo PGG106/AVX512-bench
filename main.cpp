@@ -28,7 +28,7 @@ void bench_primitive()
 	for (int j = 0;j < samples;j++) {
 		auto start = std::chrono::high_resolution_clock::now();
 		for (size_t i = 0; i < 256; i++) {
-			dst1[i] = 
+			dst1[i] =
 				static_cast<int32_t>(src1[i * 4]) * static_cast<int32_t>(src2[i * 4]) +
 				static_cast<int32_t>(src1[i * 4 + 1]) * static_cast<int32_t>(src2[i * 4 + 1]) +
 				static_cast<int32_t>(src1[i * 4 + 2]) * static_cast<int32_t>(src2[i * 4 + 2]) +
@@ -84,8 +84,11 @@ void bench_nnue()
 	net.init();
 	net.move(net.board_accumulator, 6, 10, 25);
 	auto output = net.output(net.board_accumulator);
-	std::cout << output << std::endl;
-
+	std::cout << "Autovec output is: " << output << std::endl;
+#if defined(__AVX512VNNI__) && defined(__AVX512F__)
+	auto outputSIMD = net.outputSIMD(net.board_accumulator);
+	std::cout << "SIMD output is: " << outputSIMD << std::endl;
+#endif
 
 }
 
@@ -183,8 +186,6 @@ void convoluteSIMD(std::array<std::array<int8_t, 4>, 4> input, std::array<std::a
 #endif
 
 
-
-
 	int convolute = 0; // This holds the convolution results for an index.
 	int x, y; // Used for input matrix index
 	constexpr int input_rows = 4, input_columns = 4, kernel_rows = 2, kernel_columns = 2;
@@ -251,8 +252,8 @@ void bench_conv() {
 
 int main()
 {
-	bench_primitive();
+	//bench_primitive();
 	bench_nnue();
-	bench_conv();
+	//	bench_conv();
 	return 0;
 }

@@ -66,6 +66,7 @@ int32_t MockNet::outputSIMD(const MockNet::accumulator& board_accumulator)
 			_src2 = _mm512_loadu_si512((__m512i const*)&outputWeights[0]);
 			_src3 = _mm512_set1_epi8(1);
 			_dst = _mm512_dpbusd_epi32(_src3, _src1, _src2);
+			output += _mm512_reduce_add_epi32(_dst);
 		}
 	
 	}
