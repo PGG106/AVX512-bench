@@ -1,5 +1,0 @@
- TID: 0 executed instruction with an unaligned memory reference to address 0x35199ffb20 INSTR: 0x7ff6d1ad3912: IFORM: VMOVDQA64_MEMu64_MASKmskw_ZMMu64_AVX512 :: vmovdqa64 zmmword ptr [rax], zmm0
-	IMAGE:    C:\Users\giuseppe\source\repos\Vectorization\a.exe
-	FUNCTION: unnamedImageEntryPoint
-	FUNCTION ADDR: 0x7ff6d1ad1125
-# $eof
