@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <array>
 #include <immintrin.h>
+#include "simd.h"
+
 constexpr int INPUT_WEIGHTS = 768;
 constexpr int HIDDEN_SIZE = 512;
 class MockNet {

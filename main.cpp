@@ -2,10 +2,9 @@
 #include <array>
 #include <immintrin.h>
 #include <chrono>
-#include "MockNet.h"
-#include <iostream>
 #include <assert.h>
-
+#include "MockNet.h"
+#include "simd.h"
 
 void bench_primitive()
 {
@@ -13,7 +12,7 @@ void bench_primitive()
 	std::array<uint8_t, 1024> src1 = {};
 	std::array<int8_t, 1024> src2 = {};
 	std::array<int32_t, 256> src3 = {};
-	std::array<int32_t, 256> volatile dst1 = {};
+	std::array<int32_t, 256> dst1 = {};
 	for (size_t i = 0; i < 1024; i++) {
 		src1[i] = static_cast<uint8_t>(i % 240);
 		src2[i] = static_cast<int8_t>(i % 100);
@@ -57,11 +56,11 @@ void bench_primitive()
 	for (int j = 0;j < samples;j++) {
 		auto simd_start = std::chrono::high_resolution_clock::now();
 		for (int i = 0; i < 1024 / int8_per_register;i++) {
-			_src1 = _mm512_loadu_si512((__m512i const*)&src1[int8_per_register * i]);
-			_src2 = _mm512_loadu_si512((__m512i const*)&src2[int8_per_register * i]);
-			_src3 = _mm512_loadu_si512((__m512i const*)&src3[int32_per_register * i]);
-			_dst = _mm512_dpbusd_epi32(_src3, _src1, _src2);
-			final_sum += _mm512_reduce_add_epi32(_dst);
+			_src1 = reg_loadu((__m512i const *)&src1[int8_per_register * i]);
+			_src2 = reg_loadu((__m512i const *)&src2[int8_per_register * i]);
+			_src3 = reg_loadu((__m512i const *)&src3[int32_per_register * i]);
+			_dst = dpbusd(_src3, _src1, _src2);
+			final_sum += reduce_add(_dst);
 		}
 		auto simd_stop = std::chrono::high_resolution_clock::now();
 		auto simd_duration = std::chrono::duration_cast<std::chrono::nanoseconds>(simd_stop - simd_start).count();
@@ -91,9 +90,6 @@ void bench_nnue()
 #endif
 
 }
-
-
-
 
 //Convolute an input matrix with a kernel and add a bias
 /* array([[28., 31., 34.],
@@ -200,9 +196,9 @@ void convoluteSIMD(std::array<std::array<int8_t, 4>, 4> input, std::array<std::a
 	);
 	for (int j = 0;j < samples;j++) {
 		auto start = std::chrono::high_resolution_clock::now();
-		_dst = _mm512_dpbusd_epi32(_src3, _src1, _src2);
+		_dst = dpbusd(_src3, _src1, _src2);
 
-		_mm512_storeu_epi32(convolutions, _dst);
+		reg_store(convolutions, _dst);
 		auto stop = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
 		total_time += duration;
