@@ -38,7 +38,6 @@ void bench_primitive()
 		auto stop = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
 		total_time += duration;
-		total_sum = 0;
 	}
 
 	std::cout << "Autovec code took an average of " << total_time / samples << " nanoseconds" << std::endl;
