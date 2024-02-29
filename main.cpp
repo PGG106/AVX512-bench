@@ -8,6 +8,7 @@
 
 void bench_primitive()
 {
+	std::cout<<"TEST 1: PRIMITIVE\n";
 	constexpr int samples = 10000;
 	std::array<uint8_t, 1024> src1 = {};
 	std::array<int8_t, 1024> src2 = {};
@@ -23,6 +24,7 @@ void bench_primitive()
 	}
 	int64_t total_time = 0;
 	int64_t total_sum = 0;
+	std::cout << "STARTING AUTOVEC TESTRUN\n";
 	//Loop 1000 times to get a good average
 	for (int j = 0;j < samples;j++) {
 		auto start = std::chrono::high_resolution_clock::now();
@@ -42,7 +44,7 @@ void bench_primitive()
 
 	std::cout << "Autovec code took an average of " << total_time / samples << " nanoseconds" << std::endl;
 	std::cout << "Primitive autovec total sum is: " << total_sum << std::endl;
-	std::cout << " \n--- \n";
+	std::cout << "\n";
 #if defined(__AVX512VNNI__) && defined(__AVX512F__)
 	std::cout << "Now trying AVX512VNNI instrisics\n";
 	__m512i volatile _src1, _src2, _src3, _dst;
@@ -72,22 +74,24 @@ void bench_primitive()
 #else
 	std::cout << " AVX512VNNI Support not found\n";
 #endif
+	std::cout << " \n---\n";
 }
 
 
 void bench_nnue()
 {
-
+	std::cout << "TEST 2: NNUE\n";
 	MockNet net = MockNet();
 	net.init();
 	net.move(net.board_accumulator, 6, 10, 25);
+	std::cout << "STARTING AUTOVEC TESTRUN\n";
 	auto output = net.output(net.board_accumulator);
 	std::cout << "Autovec output is: " << output << std::endl;
 #if defined(__AVX512VNNI__) && defined(__AVX512F__)
 	auto outputSIMD = net.outputSIMD(net.board_accumulator);
 	std::cout << "SIMD output is: " << outputSIMD << std::endl;
 #endif
-
+	std::cout << " \n---\n";
 }
 
 //Convolute an input matrix with a kernel and add a bias
@@ -96,6 +100,7 @@ void bench_nnue()
 	   [52., 55., 58.]])*/
 void convolute(std::array<std::array<int8_t, 4>, 4> input, std::array<std::array<int8_t, 2>, 2> kernel, int32_t bias)
 {
+	std::cout << "TEST 3: CONVOLUTION\n";
 	constexpr int samples = 10000;
 	int64_t total_time = 0;
 	int volatile convolute = 0; // This holds the convolution results for an index.
@@ -145,7 +150,7 @@ void convolute(std::array<std::array<int8_t, 4>, 4> input, std::array<std::array
 		auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
 		total_time += duration;
 	}
-	std::cout << "Autovec convolution took: " << total_time / samples << std::endl;
+	std::cout << "Autovec convolution took an average of " << total_time / samples <<" nanoseconds"<<std::endl;
 	for (std::array<int, width> row : output) {
 		for (int element : row) {
 			std::cout << element << " ";

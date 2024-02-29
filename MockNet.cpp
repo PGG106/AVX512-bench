@@ -45,7 +45,7 @@ int32_t MockNet::output(const MockNet::accumulator& board_accumulator)
 	int32_t unsquared = output / 255 + outputBias;
 	auto stop = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
-	std::cout <<"Net inference with autovec took "<< duration / 1500 << std::endl;
+	std::cout <<"Net inference with autovec took an average of "<< duration / 1500 << " nanoseconds" << std::endl;
 	return unsquared * 400 / (64 * 255);
 }
 
@@ -73,7 +73,7 @@ int32_t MockNet::outputSIMD(const MockNet::accumulator& board_accumulator)
 	int32_t unsquared = output / 255 + outputBias;
 	auto stop = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
-	std::cout <<"Net inference with SIMD took "<< duration / 1500 << std::endl;
+	std::cout << "Net inference with SIMD took an average of " << duration / 1500 << " nanoseconds" << std::endl;
 	return unsquared * 400 / (64 * 255);
 #endif
 	return 0;
