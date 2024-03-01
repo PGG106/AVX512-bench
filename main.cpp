@@ -88,6 +88,7 @@ void bench_nnue()
 	auto output = net.output(net.board_accumulator);
 	std::cout << "Autovec output is: " << output << std::endl;
 #if defined(__AVX512VNNI__) && defined(__AVX512F__)
+	std::cout << "STARTING SIMD TESTRUN\n";
 	auto outputSIMD = net.outputSIMD(net.board_accumulator);
 	std::cout << "SIMD output is: " << outputSIMD << std::endl;
 #endif
@@ -113,6 +114,7 @@ void convolute(std::array<std::array<int8_t, 4>, 4> input, std::array<std::array
 	const int height = (input_rows - kernel_rows) + 1;
 
 	std::array<std::array<int32_t, height>, width> output;
+	std::cout << "STARTING AUTOVEC TESTRUN\n";
 	for (int j = 0;j < samples;j++) {
 		auto start = std::chrono::high_resolution_clock::now();
 		// Going over every row of the input
@@ -150,13 +152,13 @@ void convolute(std::array<std::array<int8_t, 4>, 4> input, std::array<std::array
 		auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
 		total_time += duration;
 	}
-	std::cout << "Autovec convolution took an average of " << total_time / samples <<" nanoseconds"<<std::endl;
 	for (std::array<int, width> row : output) {
 		for (int element : row) {
 			std::cout << element << " ";
 		}
 		std::cout << std::endl;
 	}
+	std::cout << "Autovec convolution took an average of " << total_time / samples << " nanoseconds" << std::endl;
 	return;
 }
 
@@ -213,6 +215,8 @@ void convoluteSIMD(std::array<std::array<int8_t, 4>, 4> input, std::array<std::a
 		std::cout << convolutions[i] << " ";
 		if ((i + 1) % width == 0) std::cout << std::endl;
 }
+std::cout << "SIMD convolution took an average of " << total_time / samples << " nanoseconds" << std::endl;
+return;
 #endif
 }
 
